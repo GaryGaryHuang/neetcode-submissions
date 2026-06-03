@@ -1,0 +1,45 @@
+class Solution {
+    fun carFleet(target: Int, position: IntArray, speed: IntArray): Int {
+        val n = position.size - 1
+
+        //  <Position, time>
+        val posToTime = mutableListOf<Pair<Int, Double>>()
+        for (i in 0 until n) {
+            val time = (target - position[i]) / speed[i].toDouble()
+            posToTime.add(Pair(position[i], time))
+        }
+        posToTime.sortBy { it.first }
+
+        val times = posToTime.map { it.second }
+
+        var fleet = 0
+        var lastFleetTime = 0.0
+
+        var i = n - 1
+        while (i >= 0) {
+            lastFleetTime = times[i]
+
+            var j = i - 1
+            while (j >= 0 && times[j] <= times[i]) j--
+
+            fleet++
+            i = j
+        }
+
+        return fleet
+    }
+}
+
+/**
+We know the cars' positions and speeds, 
+so we can estimate when they will reach the destination.
+Fomula: (target - position) / speed
+This value represents how many units of time 
+a car needs to reach the destination.
+
+> A car can not pass another car ahead of it. 
+
+We start with the car closest to the target.
+If a car behind it has a smaller or equal time value,
+it means the car behind can catch up to the car in front.
+*/
